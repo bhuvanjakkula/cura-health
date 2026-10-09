@@ -17,7 +17,8 @@ import {
   Trash2,
   Lock,
   Layers,
-  Inbox
+  Inbox,
+  LogOut
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { USER_PROFILES } from '../../data/mockData';
@@ -30,6 +31,7 @@ interface HeaderProps {
   onOpenSearch: () => void;
   unreadNotifications: number;
   onNavigateTab?: (tab: string, id?: string) => void;
+  onSignOut?: () => void;
 }
 
 interface NotificationItem {
@@ -104,7 +106,8 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleTheme,
   onOpenSearch,
   unreadNotifications,
-  onNavigateTab
+  onNavigateTab,
+  onSignOut
 }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
@@ -585,6 +588,31 @@ export const Header: React.FC<HeaderProps> = ({
                   {currentUser.id === usr.id && <UserCheck size={16} color="#3b82f6" />}
                 </div>
               ))}
+
+              {onSignOut && (
+                <div
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    onSignOut();
+                  }}
+                  style={{
+                    marginTop: '8px',
+                    padding: '8px 10px',
+                    borderTop: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#fb7185',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    borderRadius: '6px'
+                  }}
+                >
+                  <LogOut size={14} />
+                  <span>Sign Out / Switch Gateway</span>
+                </div>
+              )}
             </div>
           )}
         </div>

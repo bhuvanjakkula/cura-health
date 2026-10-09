@@ -15,6 +15,7 @@ import { ClinicalEvidenceEngine } from './components/evidence/ClinicalEvidenceEn
 import { NewPriorAuthModal } from './components/modals/NewPriorAuthModal';
 import { AppealGeneratorModal } from './components/modals/AppealGeneratorModal';
 import { QuickPatientSearchModal } from './components/modals/QuickPatientSearchModal';
+import { AuthGateway } from './components/auth/AuthGateway';
 
 import { 
   USER_PROFILES, 
@@ -25,6 +26,15 @@ import {
 import { PriorAuthItem, ScheduleSlot, ClaimScrubberItem, UserProfile } from './types';
 
 export function App() {
+  const [authUser, setAuthUser] = useState<any>(() => {
+    try {
+      const saved = localStorage.getItem('cura_auth_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [currentUser, setCurrentUser] = useState<UserProfile>(USER_PROFILES[0]);
   const [isDark, setIsDark] = useState(true);
@@ -95,6 +105,26 @@ export function App() {
   const unscrubbedClaimsCount = claims.filter(c => c.status === 'flagged').length;
   const noShowAlertsCount = scheduleSlots.filter(s => s.noShowRiskScore >= 50).length;
 
+  if (!authUser) {
+    return (
+      <div style={{ minHeight: '100vh' }} className="bg-gradient-mesh">
+        <AuthGateway 
+          onLoginSuccess={(user) => {
+            setAuthUser(user);
+            if (user.isOwner) {
+              const exec = USER_PROFILES.find(p => p.role === 'physician') || USER_PROFILES[0];
+              setCurrentUser({
+                ...exec,
+                name: user.name,
+                roleTitle: user.roleTitle
+              });
+            }
+          }} 
+        />
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }} className="bg-gradient-mesh">
       {/* Top Application Header */}
@@ -108,6 +138,10 @@ export function App() {
         onNavigateTab={(tab, id) => {
           setActiveTab(tab as NavTab);
           if (id && tab === 'prior_auth') setSelectedPaId(id);
+        }}
+        onSignOut={() => {
+          localStorage.removeItem('cura_auth_user');
+          setAuthUser(null);
         }}
       />
 
