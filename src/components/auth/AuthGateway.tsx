@@ -254,6 +254,21 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
           <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', margin: 0 }}>
             Enterprise Healthcare Practice & Prior Auth Intelligence
           </p>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%)',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
+            borderRadius: '20px',
+            padding: '4px 12px',
+            marginTop: '10px',
+            fontSize: '0.72rem',
+            color: '#fbbf24',
+            fontWeight: 700
+          }}>
+            <span>🎁 3 Months Free Trial Included on All Plans</span>
+          </div>
         </div>
 
         {/* Tab Switcher: Sign In vs Sign Up */}

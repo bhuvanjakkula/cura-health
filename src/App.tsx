@@ -16,6 +16,7 @@ import { NewPriorAuthModal } from './components/modals/NewPriorAuthModal';
 import { AppealGeneratorModal } from './components/modals/AppealGeneratorModal';
 import { QuickPatientSearchModal } from './components/modals/QuickPatientSearchModal';
 import { AuthGateway } from './components/auth/AuthGateway';
+import { PricingPlansView } from './components/pricing/PricingPlansView';
 
 import { 
   USER_PROFILES, 
@@ -222,6 +223,10 @@ export function App() {
 
           {activeTab === 'compliance' && (
             <ComplianceShield />
+          )}
+
+          {activeTab === 'pricing' && (
+            <PricingPlansView />
           )}
         </main>
       </div>

@@ -14,7 +14,8 @@ import {
   Inbox,
   Dna,
   BookOpen,
-  Layers
+  Layers,
+  CreditCard
 } from 'lucide-react';
 
 export type NavTab = 
@@ -27,7 +28,8 @@ export type NavTab =
   | 'capacity'
   | 'claims_scrubber'
   | 'pqc_security'
-  | 'compliance';
+  | 'compliance'
+  | 'pricing';
 
 interface SidebarProps {
   activeTab: NavTab;
@@ -127,6 +129,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       badge: 'Protected',
       badgeColor: '#10b981',
       desc: 'Audit Trail & BAA Telemetry'
+    },
+    {
+      id: 'pricing' as NavTab,
+      label: 'Plans & Pricing',
+      icon: CreditCard,
+      badge: '3 Mo Free',
+      badgeColor: '#f59e0b',
+      desc: 'Stripe Subscriptions & Trial'
     }
   ];
 

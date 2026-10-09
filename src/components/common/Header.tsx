@@ -18,7 +18,8 @@ import {
   Lock,
   Layers,
   Inbox,
-  LogOut
+  LogOut,
+  CreditCard
 } from 'lucide-react';
 import { UserProfile } from '../../types';
 import { USER_PROFILES } from '../../data/mockData';
@@ -324,6 +325,29 @@ export const Header: React.FC<HeaderProps> = ({
           <ShieldCheck size={15} color="#10b981" />
           <span>HIPAA Shield Active (AES-256)</span>
         </div>
+
+        {/* Plans & Pricing Trigger with 3 Months Free Trial Tag */}
+        <button
+          onClick={() => onNavigateTab && onNavigateTab('pricing')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%)',
+            border: '1px solid rgba(245, 158, 11, 0.4)',
+            borderRadius: '20px',
+            padding: '5px 12px',
+            fontSize: '0.75rem',
+            color: '#fbbf24',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          title="View Pricing Plans & 3 Months Free Trial"
+        >
+          <CreditCard size={14} color="#f59e0b" />
+          <span>Plans (3 Mo Free)</span>
+        </button>
 
         {/* Theme Toggle */}
         <button
