@@ -105,6 +105,10 @@ export function App() {
         onToggleTheme={() => setIsDark(!isDark)}
         onOpenSearch={() => setIsSearchModalOpen(true)}
         unreadNotifications={pendingPACount + unscrubbedClaimsCount}
+        onNavigateTab={(tab, id) => {
+          setActiveTab(tab as NavTab);
+          if (id && tab === 'prior_auth') setSelectedPaId(id);
+        }}
       />
 
       {/* Main App Layout (Sidebar + Content Workspace) */}

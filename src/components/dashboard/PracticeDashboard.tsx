@@ -120,7 +120,12 @@ export const PracticeDashboard: React.FC<PracticeDashboardProps> = ({
         gap: '20px'
       }}>
         {/* KPI 1: Prior Auth First-Pass Rate */}
-        <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
+        <div 
+          onClick={() => onNavigateToPA()}
+          className="glass-panel glass-panel-hover" 
+          style={{ padding: '20px', cursor: 'pointer' }}
+          title="Click to view Prior Auth Hub"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Prior Auth Approval Rate</div>
@@ -147,7 +152,12 @@ export const PracticeDashboard: React.FC<PracticeDashboardProps> = ({
         </div>
 
         {/* KPI 2: Authorization Velocity (Turnaround) */}
-        <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
+        <div 
+          onClick={() => onNavigateToEvidence && onNavigateToEvidence()}
+          className="glass-panel glass-panel-hover" 
+          style={{ padding: '20px', cursor: 'pointer' }}
+          title="Click to view Clinical Evidence Engine"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Avg. Auth Turnaround Time</div>
@@ -174,7 +184,12 @@ export const PracticeDashboard: React.FC<PracticeDashboardProps> = ({
         </div>
 
         {/* KPI 3: Clinician Admin Hours Saved */}
-        <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
+        <div 
+          onClick={onNavigateToCharting}
+          className="glass-panel glass-panel-hover" 
+          style={{ padding: '20px', cursor: 'pointer' }}
+          title="Click to launch Ambient SOAP Studio"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Clinician Time Reclaimed</div>
@@ -200,7 +215,12 @@ export const PracticeDashboard: React.FC<PracticeDashboardProps> = ({
         </div>
 
         {/* KPI 4: Clean Claim Rate */}
-        <div className="glass-panel glass-panel-hover" style={{ padding: '20px' }}>
+        <div 
+          onClick={onNavigateToScrubber}
+          className="glass-panel glass-panel-hover" 
+          style={{ padding: '20px', cursor: 'pointer' }}
+          title="Click to view Claims Scrubber"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Pre-Submission Clean Rate</div>

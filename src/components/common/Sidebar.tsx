@@ -265,7 +265,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <span>Research & Evidence Library</span>
         </button>
 
-        <div className="glass-panel" style={{ padding: '14px', borderRadius: '12px' }}>
+        <div 
+          onClick={() => onSelectTab('compliance')}
+          className="glass-panel glass-panel-hover" 
+          style={{ padding: '14px', borderRadius: '12px', cursor: 'pointer' }}
+          title="Click to view HIPAA Compliance & Practice Health"
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
             <Activity size={16} color="#10b981" />
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
