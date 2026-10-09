@@ -245,15 +245,15 @@ const PATIENTS: PatientProfile[] = [
       {
         severity: 'high',
         interaction: 'Prolonged steroid exposure (>90 days prednisone)',
-        recommendation: 'Bone mineral density loss and adrenal suppression. Step up to targeted IL-23 biologic therapy.',
-        actionLabel: 'Run IL-23 Step-Up Simulation',
+        recommendation: 'Bone density scan (DEXA) indicated. Accelerate biologic step-up therapy (IL-23 or anti-TNF).',
+        actionLabel: 'Accelerate Biologic Step-Up (IL-23 / Anti-TNF)',
         actionType: 'run_sim',
         simId: 'sim_il23'
       },
       {
         severity: 'moderate',
-        interaction: 'Corticosteroid osteopenia risk monitoring',
-        recommendation: 'Baseline DEXA axial scan and serum 25-OH Vitamin D indicated per AGA guidelines.',
+        interaction: 'Corticosteroid osteopenia monitoring & axial fragility',
+        recommendation: 'Baseline DEXA axial bone density scan and serum 25-OH Vitamin D indicated per AGA guidelines.',
         actionLabel: 'Schedule DEXA Bone Scan',
         actionType: 'schedule_dexa'
       }
