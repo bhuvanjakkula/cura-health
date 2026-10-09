@@ -232,6 +232,7 @@ export const PatientDigitalTwin: React.FC = () => {
   const [activeSimulation, setActiveSimulation] = useState<SimulationScenario | null>(null);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationApplied, setSimulationApplied] = useState(false);
+  const [isPacketAttached, setIsPacketAttached] = useState(false);
 
   const SIMULATION_PRESETS: Record<string, SimulationScenario[]> = {
     pt_001: [
@@ -279,6 +280,7 @@ export const PatientDigitalTwin: React.FC = () => {
     setIsSimulating(true);
     setActiveSimulation(sim);
     setSimulationApplied(false);
+    setIsPacketAttached(false);
     setTimeout(() => {
       setIsSimulating(false);
       setSimulationApplied(true);
@@ -769,14 +771,35 @@ export const PatientDigitalTwin: React.FC = () => {
                   Estimated 2-Year Direct Cost Savings: {activeSimulation.costAvoidance}
                 </div>
 
-                <button
-                  onClick={() => alert(`Digital Twin Synthesis for ${selectedPatient.name} added to Clinical Encounter and Evidence Engine!`)}
-                  className="btn-primary"
-                  style={{ width: '100%', padding: '10px', fontSize: '0.8rem', borderRadius: '8px' }}
-                >
-                  <FileText size={14} />
-                  <span>Attach Simulation to Prior Auth Packet</span>
-                </button>
+                {isPacketAttached ? (
+                  <div style={{
+                    padding: '12px',
+                    borderRadius: '8px',
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    border: '1px solid rgba(16, 185, 129, 0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '0.78rem',
+                    color: '#34d399',
+                    fontWeight: 700
+                  }}>
+                    <CheckCircle2 size={16} color="#10b981" />
+                    <span>Attached to Prior Auth Packet #AUTH-88291 & Section 4.1 Schema</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setIsPacketAttached(true);
+                      confetti({ particleCount: 50, spread: 70 });
+                    }}
+                    className="btn-primary"
+                    style={{ width: '100%', padding: '10px', fontSize: '0.8rem', borderRadius: '8px' }}
+                  >
+                    <FileText size={14} />
+                    <span>Attach Simulation to Prior Auth Packet</span>
+                  </button>
+                )}
               </div>
             )}
           </div>

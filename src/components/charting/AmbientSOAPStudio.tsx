@@ -62,7 +62,8 @@ export const AmbientSOAPStudio: React.FC = () => {
   const toggleLiveMicrophone = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Speech Recognition API is not supported in this browser. Please use the preset simulation.');
+      setTranscriptText('Speech Recognition API not enabled in this browser. Running automated clinical encounter simulation...');
+      handleSimulateAmbientCapture();
       return;
     }
 
@@ -186,7 +187,13 @@ SUGGESTED BILLING:
 E&M Level: ${currentSoapNote.emLevel}
 CPT Codes: ${currentSoapNote.suggestedCptCodes.map(c => c.code + ' (' + c.desc + ')').join(', ')}`;
 
-    navigator.clipboard.writeText(formatted);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(formatted);
+      }
+    } catch (e) {
+      console.warn('Clipboard write fallback', e);
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

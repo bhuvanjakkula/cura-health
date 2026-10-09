@@ -53,13 +53,25 @@ export const ClinicalEvidenceEngine: React.FC = () => {
   });
 
   const handleCopyHash = (hash: string) => {
-    navigator.clipboard.writeText(hash);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(hash);
+      }
+    } catch (e) {
+      console.warn('Clipboard write fallback', e);
+    }
     setCopiedHash(hash);
     setTimeout(() => setCopiedHash(null), 2000);
   };
 
   const handleCopyJson = (obj: ClinicalEvidenceObject) => {
-    navigator.clipboard.writeText(JSON.stringify(obj, null, 2));
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(JSON.stringify(obj, null, 2));
+      }
+    } catch (e) {
+      console.warn('Clipboard write fallback', e);
+    }
     setCopiedJson(true);
     setTimeout(() => setCopiedJson(false), 2000);
   };
