@@ -15,11 +15,24 @@ import {
   Dna,
   BookOpen,
   Layers,
-  CreditCard
+  CreditCard,
+  Bot,
+  HeartPulse,
+  TrendingUp,
+  Languages,
+  Network,
+  Sparkles,
+  Zap,
+  DollarSign
 } from 'lucide-react';
 
 export type NavTab = 
   | 'dashboard'
+  | 'c2r_engine'
+  | 'digital_twin'
+  | 'predictive_revenue'
+  | 'patient_concierge'
+  | 'federated_network'
   | 'evidence_engine'
   | 'prior_auth'
   | 'ambient_soap'
@@ -50,7 +63,50 @@ export const Sidebar: React.FC<SidebarProps> = ({
   unscrubbedClaimsCount,
   noShowAlertsCount
 }) => {
-  const navItems = [
+  const innovationNavItems = [
+    {
+      id: 'c2r_engine' as NavTab,
+      label: 'C2R Autonomous Engine',
+      icon: Bot,
+      badge: 'Auto Agents',
+      badgeColor: '#0ea5e9',
+      desc: 'Doc-to-Evidence & Auth Pipeline'
+    },
+    {
+      id: 'digital_twin' as NavTab,
+      label: 'Patient Digital Twin',
+      icon: HeartPulse,
+      badge: 'Kinetics',
+      badgeColor: '#38bdf8',
+      desc: 'Longitudinal Lab & In-Silico Sim'
+    },
+    {
+      id: 'predictive_revenue' as NavTab,
+      label: 'Predictive Revenue AI',
+      icon: DollarSign,
+      badge: 'Denial Shield',
+      badgeColor: '#10b981',
+      desc: 'Payer Risk & 90-Day Cash Velocity'
+    },
+    {
+      id: 'patient_concierge' as NavTab,
+      label: 'Multilingual Concierge',
+      icon: Languages,
+      badge: '6 Langs',
+      badgeColor: '#c084fc',
+      desc: 'Patient Prep, Auth & Refills'
+    },
+    {
+      id: 'federated_network' as NavTab,
+      label: 'Federated AI Network',
+      icon: Network,
+      badge: 'Zero PHI',
+      badgeColor: '#06b6d4',
+      desc: 'Decentralized Hospital Models'
+    }
+  ];
+
+  const coreNavItems = [
     {
       id: 'dashboard' as NavTab,
       label: 'Practice Command',
@@ -140,160 +196,185 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   ];
 
+  const renderNavList = (items: typeof coreNavItems) => (
+    <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+      {items.map((item) => {
+        const Icon = item.icon;
+        const isActive = activeTab === item.id;
+        return (
+          <button
+            key={item.id}
+            onClick={() => onSelectTab(item.id)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '8px 10px',
+              borderRadius: '9px',
+              border: isActive ? '1px solid var(--border-glow)' : '1px solid transparent',
+              background: isActive ? 'rgba(59, 130, 246, 0.14)' : 'transparent',
+              color: isActive ? '#60a5fa' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              width: '100%',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <div style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '7px',
+              background: isActive ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.04)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <Icon size={16} color={isActive ? '#60a5fa' : 'currentColor'} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: '0.8rem',
+                fontWeight: isActive ? 700 : 500,
+                color: isActive ? 'var(--text-primary)' : 'inherit',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}>
+                {item.label}
+              </div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {item.desc}
+              </div>
+            </div>
+            {item.badge && (
+              <span style={{
+                fontSize: '0.62rem',
+                fontWeight: 700,
+                padding: '1px 5px',
+                borderRadius: '5px',
+                background: `${item.badgeColor}22`,
+                color: item.badgeColor,
+                border: `1px solid ${item.badgeColor}44`,
+                whiteSpace: 'nowrap'
+              }}>
+                {item.badge}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </nav>
+  );
+
   return (
     <aside style={{
-      width: '260px',
+      width: '270px',
       background: 'var(--bg-secondary)',
       borderRight: '1px solid var(--border-subtle)',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
-      padding: '20px 14px',
+      padding: '16px 12px',
       height: 'calc(100vh - 65px)',
       position: 'sticky',
-      top: '65px'
+      top: '65px',
+      overflowY: 'auto'
     }}>
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         {/* Quick Action Button */}
         <button
           onClick={onOpenNewPA}
           className="btn-primary"
           style={{
             width: '100%',
-            padding: '12px',
-            marginBottom: '20px',
-            borderRadius: '12px',
-            fontSize: '0.85rem'
+            padding: '10px',
+            borderRadius: '10px',
+            fontSize: '0.82rem'
           }}
         >
-          <PlusCircle size={18} />
+          <PlusCircle size={16} />
           <span>New Prior Auth Request</span>
         </button>
 
-        {/* Section Label */}
-        <div style={{
-          fontSize: '0.68rem',
-          fontWeight: 800,
-          color: 'var(--text-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          padding: '0 8px 10px 8px'
-        }}>
-          Core Clinical Modules
+        {/* Section: Next-Gen AI Innovations */}
+        <div>
+          <div style={{
+            fontSize: '0.65rem',
+            fontWeight: 800,
+            color: '#38bdf8',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            padding: '0 6px 6px 6px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <Sparkles size={12} color="#38bdf8" />
+            <span>AI Engine Innovations</span>
+          </div>
+          {renderNavList(innovationNavItems)}
         </div>
 
-        {/* Nav Items List */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '10px 12px',
-                  borderRadius: '10px',
-                  border: isActive ? '1px solid var(--border-glow)' : '1px solid transparent',
-                  background: isActive ? 'rgba(59, 130, 246, 0.12)' : 'transparent',
-                  color: isActive ? '#60a5fa' : 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  width: '100%',
-                  transition: 'all 0.15s ease'
-                }}
-              >
-                <div style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
-                  background: isActive ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <Icon size={18} color={isActive ? '#60a5fa' : 'currentColor'} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: '0.825rem',
-                    fontWeight: isActive ? 700 : 500,
-                    color: isActive ? 'var(--text-primary)' : 'inherit',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis'
-                  }}>
-                    {item.label}
-                  </div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                    {item.desc}
-                  </div>
-                </div>
-                {item.badge && (
-                  <span style={{
-                    fontSize: '0.65rem',
-                    fontWeight: 700,
-                    padding: '2px 6px',
-                    borderRadius: '6px',
-                    background: `${item.badgeColor}22`,
-                    color: item.badgeColor,
-                    border: `1px solid ${item.badgeColor}44`
-                  }}>
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Section: Core Practice Modules */}
+        <div>
+          <div style={{
+            fontSize: '0.65rem',
+            fontWeight: 800,
+            color: 'var(--text-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            padding: '4px 6px 6px 6px'
+          }}>
+            Core Clinical Practice
+          </div>
+          {renderNavList(coreNavItems)}
+        </div>
       </div>
 
       {/* Bottom Practice Health & Evidence */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
         <button
           onClick={onOpenEvidence}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            padding: '8px 12px',
+            padding: '8px 10px',
             borderRadius: '8px',
             background: 'rgba(99, 102, 241, 0.1)',
             border: '1px solid rgba(99, 102, 241, 0.3)',
             color: '#c7d2fe',
-            fontSize: '0.75rem',
+            fontSize: '0.72rem',
             fontWeight: 700,
             cursor: 'pointer',
             width: '100%',
             justifyContent: 'center'
           }}
         >
-          <BookOpen size={14} color="#818cf8" />
+          <BookOpen size={13} color="#818cf8" />
           <span>Research & Evidence Library</span>
         </button>
 
         <div 
           onClick={() => onSelectTab('compliance')}
           className="glass-panel glass-panel-hover" 
-          style={{ padding: '14px', borderRadius: '12px', cursor: 'pointer' }}
+          style={{ padding: '10px 12px', borderRadius: '10px', cursor: 'pointer' }}
           title="Click to view HIPAA Compliance & Practice Health"
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <Activity size={16} color="#10b981" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+            <Activity size={14} color="#10b981" />
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-primary)' }}>
               Practice Health Engine
             </span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--text-secondary)', marginBottom: '2px' }}>
             <span>EHR Sync Latency</span>
             <span style={{ color: '#34d399', fontWeight: 600 }}>0.42s (Optimal)</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--text-secondary)' }}>
             <span>Clean Claims Pass</span>
-            <span style={{ color: '#60a5fa', fontWeight: 600 }}>98.4%</span>
+            <span style={{ color: '#60a5fa', fontWeight: 600 }}>98.6%</span>
           </div>
         </div>
       </div>

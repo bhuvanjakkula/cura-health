@@ -14,7 +14,11 @@ import {
   Calendar,
   Zap,
   Flame,
-  ChevronRight
+  ChevronRight,
+  Bot,
+  HeartPulse,
+  Languages,
+  Network
 } from 'lucide-react';
 import { PriorAuthItem, ScheduleSlot, ClaimScrubberItem, UserProfile } from '../../types';
 
@@ -29,6 +33,7 @@ interface PracticeDashboardProps {
   onNavigateToScrubber: () => void;
   onOpenNewPA?: () => void;
   onNavigateToEvidence?: () => void;
+  onNavigateToTab?: (tab: string) => void;
 }
 
 export const PracticeDashboard: React.FC<PracticeDashboardProps> = ({
@@ -41,7 +46,8 @@ export const PracticeDashboard: React.FC<PracticeDashboardProps> = ({
   onNavigateToCapacity,
   onNavigateToScrubber,
   onOpenNewPA,
-  onNavigateToEvidence
+  onNavigateToEvidence,
+  onNavigateToTab
 }) => {
   const approvedCount = priorAuths.filter(p => p.status === 'approved').length;
   const pendingCount = priorAuths.filter(p => p.status === 'pending_review' || p.status === 'pended_additional_info').length;
@@ -243,6 +249,131 @@ export const PracticeDashboard: React.FC<PracticeDashboardProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#38bdf8' }}>
             <span>$48,920 in denial penalties prevented this month</span>
           </div>
+        </div>
+      </div>
+
+      {/* AI Engine Innovations Spotlight */}
+      <div className="glass-panel" style={{
+        padding: '20px 24px',
+        borderRadius: '16px',
+        background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%)',
+        border: '1px solid rgba(14, 165, 233, 0.25)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Sparkles size={18} color="#38bdf8" />
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0 }}>
+              CuraHealth Autonomous AI Engine Suite
+            </h3>
+            <span style={{
+              fontSize: '0.68rem',
+              fontWeight: 700,
+              padding: '2px 8px',
+              borderRadius: '12px',
+              background: 'rgba(14, 165, 233, 0.15)',
+              color: '#38bdf8'
+            }}>
+              5 Next-Gen Breakthroughs
+            </span>
+          </div>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            From clinician-approved notes to structured evidence, predictive revenues, and patient twins
+          </span>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+          gap: '12px'
+        }}>
+          {[
+            {
+              id: 'c2r_engine',
+              title: 'C2R Autonomous Engine',
+              desc: 'Atomizes notes into Section 4.1 evidence graph with Human-in-the-Loop gates',
+              icon: Bot,
+              color: '#0ea5e9'
+            },
+            {
+              id: 'digital_twin',
+              title: 'Patient Digital Twin',
+              desc: 'Longitudinal biomarker kinetics & in-silico intervention simulations',
+              icon: HeartPulse,
+              color: '#38bdf8'
+            },
+            {
+              id: 'predictive_revenue',
+              title: 'Predictive Revenue AI',
+              desc: 'Payer behavioral denial risk forecasting & 90-day cash velocity',
+              icon: DollarSign,
+              color: '#10b981'
+            },
+            {
+              id: 'patient_concierge',
+              title: 'Multilingual Concierge',
+              desc: '6-language companion for prep, auth tracking, and refills',
+              icon: Languages,
+              color: '#c084fc'
+            },
+            {
+              id: 'federated_network',
+              title: 'Federated AI Network',
+              desc: 'Zero-PHI cross-hospital decentralized collaborative training',
+              icon: Network,
+              color: '#06b6d4'
+            }
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => onNavigateToTab && onNavigateToTab(item.id)}
+                style={{
+                  padding: '12px 14px',
+                  borderRadius: '10px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = item.color;
+                  e.currentTarget.style.background = `${item.color}15`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{
+                    width: '30px',
+                    height: '30px',
+                    borderRadius: '8px',
+                    background: `${item.color}20`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Icon size={16} color={item.color} />
+                  </div>
+                  <ChevronRight size={14} color="#64748b" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f8fafc' }}>
+                    {item.title}
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginTop: '2px', lineHeight: '1.3' }}>
+                    {item.desc}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 

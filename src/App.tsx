@@ -17,6 +17,11 @@ import { AppealGeneratorModal } from './components/modals/AppealGeneratorModal';
 import { QuickPatientSearchModal } from './components/modals/QuickPatientSearchModal';
 import { AuthGateway } from './components/auth/AuthGateway';
 import { PricingPlansView } from './components/pricing/PricingPlansView';
+import { ClinicalToRevenueEngine } from './components/autonomous/ClinicalToRevenueEngine';
+import { PatientDigitalTwin } from './components/digitaltwin/PatientDigitalTwin';
+import { PredictiveRevenueIntelligence } from './components/revenue/PredictiveRevenueIntelligence';
+import { PatientAIConcierge } from './components/concierge/PatientAIConcierge';
+import { FederatedHealthcareNetwork } from './components/federated/FederatedHealthcareNetwork';
 
 import { 
   USER_PROFILES, 
@@ -174,7 +179,28 @@ export function App() {
               onNavigateToScrubber={() => setActiveTab('claims_scrubber')}
               onOpenNewPA={() => setIsNewPaModalOpen(true)}
               onNavigateToEvidence={() => setActiveTab('evidence_engine')}
+              onNavigateToTab={(tab) => setActiveTab(tab as NavTab)}
             />
+          )}
+
+          {activeTab === 'c2r_engine' && (
+            <ClinicalToRevenueEngine />
+          )}
+
+          {activeTab === 'digital_twin' && (
+            <PatientDigitalTwin />
+          )}
+
+          {activeTab === 'predictive_revenue' && (
+            <PredictiveRevenueIntelligence />
+          )}
+
+          {activeTab === 'patient_concierge' && (
+            <PatientAIConcierge />
+          )}
+
+          {activeTab === 'federated_network' && (
+            <FederatedHealthcareNetwork />
           )}
 
           {activeTab === 'evidence_engine' && (
