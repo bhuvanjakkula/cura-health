@@ -24,9 +24,15 @@ import {
   Award,
   ChevronRight,
   TrendingUp,
-  ReceiptText
+  ReceiptText,
+  KeyRound,
+  Database,
+  Hash,
+  Scale
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+
+export type EngineStage = 'sign_off' | 'atomization' | 'multi_agent' | 'revenue';
 
 interface AgentTask {
   id: string;
@@ -113,9 +119,31 @@ const INITIAL_PIPELINE_TASKS: AgentTask[] = [
 
 export const ClinicalToRevenueEngine: React.FC = () => {
   const [pipelineTasks, setPipelineTasks] = useState<AgentTask[]>(INITIAL_PIPELINE_TASKS);
+  const [activeStage, setActiveStage] = useState<EngineStage>('sign_off');
   const [isSimulatingRun, setIsSimulatingRun] = useState(false);
   const [selectedTask, setSelectedTask] = useState<AgentTask>(pipelineTasks[1]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Stage 1: Note Sign-off State
+  const [isNoteSigned, setIsNoteSigned] = useState(true);
+  const [signOffTimestamp, setSignOffTimestamp] = useState('Today at 09:14 AM');
+  const [cryptoSignatureHash, setCryptoSignatureHash] = useState('sha256:8f2c01994b7e31d0449a88e9184fc0192');
+  const [isSigningNote, setIsSigningNote] = useState(false);
+
+  // Stage 2: Evidence Atomization State
+  const [isAtomizing, setIsAtomizing] = useState(false);
+  const [atomizationDone, setAtomizationDone] = useState(true);
+  const [selectedEvidenceNode, setSelectedEvidenceNode] = useState<string>('ev_node_1');
+
+  // Stage 3: Multi-Agent Dispatch State
+  const [isDispatchingAgents, setIsDispatchingAgents] = useState(false);
+
+  // Stage 4: Revenue Realization State
+  const [isRealizingRevenue, setIsRealizingRevenue] = useState(false);
+  const [revenueProtectedAmount, setRevenueProtectedAmount] = useState(2140);
+  const [cleanClaimRate, setCleanClaimRate] = useState(98.4);
+
+  // Cryptographic Human-Approval Audit Trail
   const [approvalLog, setApprovalLog] = useState<{ id: string; timestamp: string; actor: string; decision: string }[]>([
     {
       id: 'log_01',
@@ -128,6 +156,65 @@ export const ClinicalToRevenueEngine: React.FC = () => {
   const awaitingCount = pipelineTasks.filter(t => t.status === 'awaiting_human_approval').length;
   const completedCount = pipelineTasks.filter(t => t.status === 'completed').length;
 
+  // 1. Clinician Note Sign-off Action Handler
+  const handleSignClinicianNote = () => {
+    setIsSigningNote(true);
+    setToastMessage('Computing SHA-256 cryptographic hash over encounter note ENC-91820...');
+
+    setTimeout(() => {
+      const newHash = 'sha256:' + Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+      const newTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      setCryptoSignatureHash(newHash);
+      setSignOffTimestamp(`Today at ${newTime}`);
+      setIsNoteSigned(true);
+      setIsSigningNote(false);
+      
+      const newLog = {
+        id: `log_sign_${Date.now()}`,
+        timestamp: `Today at ${newTime}`,
+        actor: 'Dr. Sarah Lin, MD (NPI: 1841392019)',
+        decision: `1-Click Cryptographic Signature Verified & Sealed (${newHash.slice(0, 18)}...)`
+      };
+      setApprovalLog(prev => [newLog, ...prev]);
+      setToastMessage('Stage 1 Complete: Note Signed & Cryptographically Sealed! Section 4.1 Schema unlocked.');
+      confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    }, 800);
+  };
+
+  // 2. Evidence Atomization Action Handler
+  const handleExecuteAtomization = () => {
+    setIsAtomizing(true);
+    setToastMessage('Agent Alpha running Medical NLP extraction into Section 4.1 Schema Graph...');
+
+    setTimeout(() => {
+      setIsAtomizing(false);
+      setAtomizationDone(true);
+      setToastMessage('Stage 2 Complete: 4 clinical facts atomized into reusable FHIR/Section 4.1 evidence graph!');
+      confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+    }, 900);
+  };
+
+  // 3. Multi-Agent Dispatch Action Handler
+  const handleDispatchMultiAgents = () => {
+    setIsDispatchingAgents(true);
+    setToastMessage('Dispatching Agent Beta (Prior Auth) & Agent Gamma (NCCI Integrity)...');
+
+    setTimeout(() => {
+      setIsDispatchingAgents(false);
+      setPipelineTasks(prev => prev.map(t => {
+        if (t.id === 'task_beta') {
+          return { ...t, status: 'awaiting_human_approval' };
+        }
+        return { ...t, status: 'completed' };
+      }));
+      setSelectedTask(pipelineTasks[1]);
+      setToastMessage('Stage 3 Active: Agents dispatched! Consequential gate awaiting clinician authorization.');
+      confetti({ particleCount: 40, spread: 50, origin: { y: 0.6 } });
+    }, 1000);
+  };
+
+  // Human-in-the-Loop Consequential Action Approval
   const handleApproveConsequentialAction = (taskId: string) => {
     setPipelineTasks(prev => prev.map(t => {
       if (t.id === taskId) {
@@ -152,24 +239,45 @@ export const ClinicalToRevenueEngine: React.FC = () => {
     confetti({ particleCount: 70, spread: 75, origin: { y: 0.6 } });
   };
 
-  const handleSimulateAutonomousPipeline = () => {
-    setIsSimulatingRun(true);
-    setToastMessage('Simulating Clinician SOAP Note Sign-off & Autonomous Multi-Agent Dispatch...');
+  // 4. Revenue Realization Action Handler
+  const handleExecuteRevenueRealization = () => {
+    setIsRealizingRevenue(true);
+    setToastMessage('Agent Delta calculating fee schedule allowables and NCCI modifier clearance...');
 
     setTimeout(() => {
-      setPipelineTasks(prev => prev.map(t => {
-        if (t.id === 'task_beta') {
-          return {
-            ...t,
-            status: 'awaiting_human_approval'
-          };
-        }
-        return { ...t, status: 'completed' };
-      }));
+      setIsRealizingRevenue(false);
+      setRevenueProtectedAmount(2140);
+      setCleanClaimRate(98.4);
+      setToastMessage('Stage 4 Complete: $2,140 Net Cash Protected! 98.4% Clean Claim Pass Rate Verified.');
+      confetti({ particleCount: 80, spread: 90, origin: { y: 0.5 } });
+    }, 900);
+  };
+
+  // Full End-to-End Pipeline Runner
+  const handleSimulateAutonomousPipeline = () => {
+    setIsSimulatingRun(true);
+    setActiveStage('sign_off');
+    setToastMessage('Step 1/4: Clinician Cryptographic Note Sign-off initiated...');
+
+    setTimeout(() => {
+      handleSignClinicianNote();
+      setActiveStage('atomization');
+      setToastMessage('Step 2/4: Atomizing into Section 4.1 Schema Graph...');
+    }, 900);
+
+    setTimeout(() => {
+      handleExecuteAtomization();
+      setActiveStage('multi_agent');
+      setToastMessage('Step 3/4: Multi-Agent Swarm Dispatched (Agent Beta & Gamma)...');
+    }, 1800);
+
+    setTimeout(() => {
+      handleDispatchMultiAgents();
+      setActiveStage('revenue');
+      setToastMessage('Step 4/4: Revenue Realization & Clean Claim Protection Verified!');
       setIsSimulatingRun(false);
-      setToastMessage('Pipeline execution complete! Reusable evidence synthesized across Prior Auth, Coding & Revenue.');
-      confetti({ particleCount: 50, spread: 60 });
-    }, 1600);
+      confetti({ particleCount: 90, spread: 100, origin: { y: 0.5 } });
+    }, 2800);
   };
 
   return (
@@ -232,71 +340,554 @@ export const ClinicalToRevenueEngine: React.FC = () => {
               }}
             >
               <Zap size={16} />
-              <span>{isSimulatingRun ? 'Orchestrating Swarm...' : 'Simulate Note Sign-off & Run Pipeline'}</span>
+              <span>{isSimulatingRun ? 'Executing End-to-End Pipeline...' : 'Run End-to-End Pipeline (Stages 1-4)'}</span>
             </button>
           </div>
         </div>
 
-        {/* 4 Pipeline Milestones */}
+        {/* 4 Pipeline Interactive Milestones Navigation Bar */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gridTemplateColumns: 'repeat(4, 1fr)',
           gap: '14px',
           marginTop: '24px',
           paddingTop: '20px',
           borderTop: '1px solid rgba(255, 255, 255, 0.1)'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(14, 165, 233, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FileCheck size={16} color="#38bdf8" />
+          {/* Milestone 1 */}
+          <button
+            onClick={() => setActiveStage('sign_off')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '12px',
+              border: activeStage === 'sign_off' ? '2px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
+              background: activeStage === 'sign_off' ? 'rgba(14, 165, 233, 0.18)' : 'rgba(255, 255, 255, 0.03)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              transition: 'all 0.2s ease',
+              boxShadow: activeStage === 'sign_off' ? '0 0 20px rgba(14, 165, 233, 0.3)' : 'none'
+            }}
+          >
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: 'rgba(14, 165, 233, 0.2)',
+              border: '1px solid rgba(14, 165, 233, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <FileCheck size={18} color="#38bdf8" />
             </div>
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700 }}>1. Clinician Note Sign-off</div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>1-click cryptographic signature</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>1. Clinician Note Sign-off</span>
+                <CheckCircle2 size={14} color="#10b981" />
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#38bdf8', fontWeight: 600 }}>1-click cryptographic signature</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '2px' }}>{signOffTimestamp}</div>
             </div>
-          </div>
+          </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <GitMerge size={16} color="#818cf8" />
+          {/* Milestone 2 */}
+          <button
+            onClick={() => setActiveStage('atomization')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '12px',
+              border: activeStage === 'atomization' ? '2px solid #818cf8' : '1px solid rgba(255, 255, 255, 0.1)',
+              background: activeStage === 'atomization' ? 'rgba(99, 102, 241, 0.18)' : 'rgba(255, 255, 255, 0.03)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              transition: 'all 0.2s ease',
+              boxShadow: activeStage === 'atomization' ? '0 0 20px rgba(99, 102, 241, 0.3)' : 'none'
+            }}
+          >
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: 'rgba(99, 102, 241, 0.2)',
+              border: '1px solid rgba(99, 102, 241, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <GitMerge size={18} color="#818cf8" />
             </div>
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700 }}>2. Evidence Atomization</div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Section 4.1 Schema Graph</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>2. Evidence Atomization</span>
+                <CheckCircle2 size={14} color="#10b981" />
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#818cf8', fontWeight: 600 }}>Section 4.1 Schema Graph</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '2px' }}>4 reusable evidence units</div>
             </div>
-          </div>
+          </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(245, 158, 11, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bot size={16} color="#fbbf24" />
+          {/* Milestone 3 */}
+          <button
+            onClick={() => setActiveStage('multi_agent')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '12px',
+              border: activeStage === 'multi_agent' ? '2px solid #fbbf24' : '1px solid rgba(255, 255, 255, 0.1)',
+              background: activeStage === 'multi_agent' ? 'rgba(245, 158, 11, 0.18)' : 'rgba(255, 255, 255, 0.03)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              transition: 'all 0.2s ease',
+              boxShadow: activeStage === 'multi_agent' ? '0 0 20px rgba(245, 158, 11, 0.3)' : 'none'
+            }}
+          >
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: 'rgba(245, 158, 11, 0.2)',
+              border: '1px solid rgba(245, 158, 11, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <Bot size={18} color="#fbbf24" />
             </div>
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700 }}>3. Multi-Agent Dispatch</div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Prior Auth & NCCI Scrubbing</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>3. Multi-Agent Dispatch</span>
+                {awaitingCount > 0 ? (
+                  <span style={{ fontSize: '0.6rem', padding: '1px 6px', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24', fontWeight: 700 }}>
+                    GATE ACTIVE
+                  </span>
+                ) : (
+                  <CheckCircle2 size={14} color="#10b981" />
+                )}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#fbbf24', fontWeight: 600 }}>Prior Auth & NCCI Scrubbing</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '2px' }}>HITL Consequential Approval</div>
             </div>
-          </div>
+          </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <DollarSign size={16} color="#34d399" />
+          {/* Milestone 4 */}
+          <button
+            onClick={() => setActiveStage('revenue')}
+            style={{
+              padding: '14px 16px',
+              borderRadius: '12px',
+              border: activeStage === 'revenue' ? '2px solid #34d399' : '1px solid rgba(255, 255, 255, 0.1)',
+              background: activeStage === 'revenue' ? 'rgba(16, 185, 129, 0.18)' : 'rgba(255, 255, 255, 0.03)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              transition: 'all 0.2s ease',
+              boxShadow: activeStage === 'revenue' ? '0 0 20px rgba(16, 185, 129, 0.3)' : 'none'
+            }}
+          >
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: 'rgba(16, 185, 129, 0.2)',
+              border: '1px solid rgba(16, 185, 129, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <DollarSign size={18} color="#34d399" />
             </div>
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700 }}>4. Revenue Realization</div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>98.4% Clean Claim Protected</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc' }}>4. Revenue Realization</span>
+                <CheckCircle2 size={14} color="#10b981" />
+              </div>
+              <div style={{ fontSize: '0.7rem', color: '#34d399', fontWeight: 600 }}>{cleanClaimRate}% Clean Claim Protected</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '2px' }}>${revenueProtectedAmount.toLocaleString()} Net Expected Cash</div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
 
-      {/* Main Grid: Multi-Agent Task Swarm (Left) & Consequential Action Guardrail (Right) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px' }}>
-        {/* Left Column: Autonomous Multi-Agent Swarm Tracker */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Global Interactive Notification Toast */}
+      {toastMessage && (
+        <div style={{
+          padding: '12px 20px',
+          borderRadius: '12px',
+          background: 'rgba(14, 165, 233, 0.15)',
+          border: '1px solid rgba(14, 165, 233, 0.35)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '24px',
+          fontSize: '0.825rem',
+          color: '#38bdf8'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Sparkles size={16} />
+            <span style={{ fontWeight: 600 }}>{toastMessage}</span>
+          </div>
+          <button
+            onClick={() => setToastMessage(null)}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.75rem' }}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* STAGE-SPECIFIC INTERACTIVE FOCUS PANELS */}
+
+      {/* Stage 1 Focus: Clinician Note Sign-off Station */}
+      {activeStage === 'sign_off' && (
+        <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px', border: '1px solid rgba(14, 165, 233, 0.4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <FileCheck size={22} color="#38bdf8" />
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
+                  Stage 1: Clinician Note Sign-off & Cryptographic Sealing Station
+                </h3>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
+                  21 CFR Part 11 compliant digital signature applied to clinical encounter note ENC-91820
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSignClinicianNote}
+              disabled={isSigningNote}
+              className="btn-primary"
+              style={{ padding: '10px 18px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <KeyRound size={15} />
+              <span>{isSigningNote ? 'Computing SHA-256...' : 'Execute 1-Click Cryptographic Signature'}</span>
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '20px' }}>
+            {/* Signed Encounter Text */}
+            <div style={{
+              background: 'rgba(0, 0, 0, 0.3)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '10px',
+              padding: '16px',
+              fontFamily: 'monospace',
+              fontSize: '0.76rem',
+              color: '#cbd5e1',
+              lineHeight: 1.5
+            }}>
+              <div style={{ color: '#38bdf8', fontWeight: 700, marginBottom: '8px' }}>
+                [ENCOUNTER: ENC-91820] Patient: Elena Rostova (MRN-849201) • DOB: 1988-04-12
+              </div>
+              <div>SUBJECTIVE: 36yo female presents with intractable chronic migraine without aura (&gt;6 mos). Failed oral topiramate 100mg/day (severe paresthesia) and propranolol 80mg/day (symptomatic bradycardia).</div>
+              <div style={{ marginTop: '8px' }}>OBJECTIVE: Cranial nerves II-XII intact. Fundoscopic exam normal. Reflexes 2+ symmetric. Vitals: BP 118/76, HR 64.</div>
+              <div style={{ marginTop: '8px' }}>ASSESSMENT & PLAN: G43.909 Intractable migraine. Ordered High-Field 3T Brain MRI (CPT 70553) with and without contrast to rule out vascular malformation and intracranial lesion.</div>
+            </div>
+
+            {/* Cryptographic Seal Dossier */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{
+                padding: '14px',
+                borderRadius: '10px',
+                background: 'rgba(16, 185, 129, 0.08)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34d399', fontWeight: 700, fontSize: '0.8rem' }}>
+                  <ShieldCheck size={16} />
+                  <span>NIST FIPS Cryptographic Signature Valid</span>
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#cbd5e1' }}>
+                  Signer: <strong>Dr. Sarah Lin, MD</strong> (NPI: 1841392019)
+                </div>
+                <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                  Hash: {cryptoSignatureHash}
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  Timestamp: {signOffTimestamp} • Dual-Key HSM Protected
+                </div>
+              </div>
+
+              <div style={{
+                padding: '12px',
+                borderRadius: '8px',
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid var(--border-subtle)',
+                fontSize: '0.72rem',
+                color: 'var(--text-secondary)'
+              }}>
+                <strong>Downstream Propagation:</strong> This signed note unlocks the Section 4.1 Schema Graph, feeding directly into Prior Auth criteria verification and NCCI claims scrubbing.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stage 2 Focus: Evidence Atomization Section 4.1 Schema Graph */}
+      {activeStage === 'atomization' && (
+        <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px', border: '1px solid rgba(99, 102, 241, 0.4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <GitMerge size={22} color="#818cf8" />
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
+                  Stage 2: Section 4.1 Reusable Clinical Evidence Atomization Graph
+                </h3>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
+                  Transforms unstructured clinician narrative into discrete, verifiable clinical evidence tokens with SNOMED-CT & ICD-10 crosswalks
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleExecuteAtomization}
+              disabled={isAtomizing}
+              className="btn-primary"
+              style={{ padding: '10px 18px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <RefreshCw size={15} className={isAtomizing ? 'spin-slow' : ''} />
+              <span>{isAtomizing ? 'Synthesizing Graph...' : 'Re-Atomize Section 4.1 Graph'}</span>
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+            {[
+              {
+                id: 'ev_node_1',
+                title: 'Clinical Condition',
+                code: 'ICD-10 G43.909',
+                system: 'SNOMED 37796009',
+                evidence: 'Refractory chronic migraine >6 months duration without aura',
+                confidence: '99.4%',
+                status: 'Verified'
+              },
+              {
+                id: 'ev_node_2',
+                title: 'Step Therapy 1 Failure',
+                code: 'RxNorm 88249',
+                system: 'Topiramate 100mg',
+                evidence: 'Discontinued due to severe bilateral extremity paresthesias',
+                confidence: '98.8%',
+                status: 'Failed (Adverse Reaction)'
+              },
+              {
+                id: 'ev_node_3',
+                title: 'Step Therapy 2 Failure',
+                code: 'RxNorm 8787',
+                system: 'Propranolol 80mg',
+                evidence: 'Discontinued due to symptomatic bradycardia (HR <52 bpm)',
+                confidence: '97.9%',
+                status: 'Contraindicated'
+              },
+              {
+                id: 'ev_node_4',
+                title: 'Diagnostic Order',
+                code: 'CPT 70553',
+                system: 'Brain MRI w/wo Contrast',
+                evidence: 'Clinically indicated per AAN 2026 neuroimaging guidelines',
+                confidence: '99.1%',
+                status: 'Authorized'
+              }
+            ].map((node) => (
+              <div
+                key={node.id}
+                onClick={() => setSelectedEvidenceNode(node.id)}
+                style={{
+                  padding: '16px',
+                  borderRadius: '10px',
+                  background: selectedEvidenceNode === node.id ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.02)',
+                  border: selectedEvidenceNode === node.id ? '2px solid #818cf8' : '1px solid var(--border-subtle)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#818cf8', textTransform: 'uppercase' }}>
+                    {node.title}
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 700 }}>{node.confidence}</span>
+                </div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#f8fafc' }}>
+                  {node.code}
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  {node.system}
+                </div>
+                <div style={{ fontSize: '0.74rem', color: '#cbd5e1', marginTop: '4px', lineHeight: 1.35 }}>
+                  {node.evidence}
+                </div>
+                <div style={{
+                  marginTop: 'auto',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  color: '#34d399',
+                  fontSize: '0.68rem',
+                  fontWeight: 600,
+                  alignSelf: 'flex-start'
+                }}>
+                  {node.status}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Stage 3 Focus: Multi-Agent Dispatch & HITL Gate */}
+      {activeStage === 'multi_agent' && (
+        <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px', border: '1px solid rgba(245, 158, 11, 0.4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Bot size={22} color="#fbbf24" />
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
+                  Stage 3: Multi-Agent Dispatch & Human-in-the-Loop Consequential Gate
+                </h3>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
+                  Agent Beta prepares the Da Vinci PAS electronic prior auth; Agent Gamma scrubs NCCI code unbundling
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleDispatchMultiAgents}
+              disabled={isDispatchingAgents}
+              className="btn-primary"
+              style={{ padding: '10px 18px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <Zap size={15} />
+              <span>{isDispatchingAgents ? 'Dispatching Agents...' : 'Re-Dispatch Multi-Agent Swarm'}</span>
+            </button>
+          </div>
+
+          <div style={{
+            padding: '16px',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%)',
+            border: '1px solid rgba(245, 158, 11, 0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '14px'
+          }}>
             <div>
-              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Autonomous Multi-Agent Task Swarm</h2>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                4 Specialized Healthcare Agents executing simultaneously on patient Elena Rostova (MRN-849201)
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <AlertTriangle size={16} color="#fbbf24" />
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#fbbf24' }}>
+                  Consequential Decision: Electronic Prior Auth Transmission Gate
+                </span>
+              </div>
+              <p style={{ fontSize: '0.76rem', color: '#cbd5e1', margin: 0 }}>
+                Electronic transmission of X12 278 Prior Authorization alters patient coverage status and legally represents the provider. Physician authorization required.
+              </p>
+            </div>
+
+            {selectedTask.status === 'awaiting_human_approval' ? (
+              <button
+                onClick={() => handleApproveConsequentialAction(selectedTask.id)}
+                className="btn-emerald"
+                style={{ padding: '10px 18px', fontSize: '0.825rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <UserCheck size={16} />
+                <span>Authorize Electronic Transmit (Human Approval)</span>
+              </button>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34d399', fontWeight: 700, fontSize: '0.82rem' }}>
+                <CheckCircle2 size={18} />
+                <span>Authorized & Transmitted by Clinician</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Stage 4 Focus: Revenue Realization & Clean Claim Protection */}
+      {activeStage === 'revenue' && (
+        <div className="glass-panel" style={{ padding: '24px', marginBottom: '24px', border: '1px solid rgba(16, 185, 129, 0.4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <DollarSign size={22} color="#34d399" />
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0 }}>
+                  Stage 4: Revenue Realization & Clean Claim Protection Station
+                </h3>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
+                  Pre-submission clearance locks in 98.4% clean claim pass rate and protects full contracted allowable payout
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleExecuteRevenueRealization}
+              disabled={isRealizingRevenue}
+              className="btn-primary"
+              style={{ padding: '10px 18px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <CheckCircle2 size={15} />
+              <span>{isRealizingRevenue ? 'Calculating Fee Schedules...' : 'Lock Revenue Protection'}</span>
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+            <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Clean Claim Pass Rate</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#34d399', margin: '4px 0' }}>{cleanClaimRate}%</div>
+              <div style={{ fontSize: '0.68rem', color: '#10b981' }}>+22% vs Industry Average (76%)</div>
+            </div>
+
+            <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Gross Billed Value</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f8fafc', margin: '4px 0' }}>${revenueProtectedAmount.toLocaleString()}</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>CPT 70553 + E&M 99214</div>
+            </div>
+
+            <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Contracted Allowable Cash</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#38bdf8', margin: '4px 0' }}>$1,680.00</div>
+              <div style={{ fontSize: '0.68rem', color: '#38bdf8' }}>Payout SLA: 14 Days (Direct ACH)</div>
+            </div>
+
+            <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Predicted Denial Risk</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#a855f7', margin: '4px 0' }}>1.2%</div>
+              <div style={{ fontSize: '0.68rem', color: '#c084fc' }}>Negligible Payer Friction Risk</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Grid: Multi-Agent Execution Pipeline + HITL Consequential Approval & Audit Station */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
+        
+        {/* Left Column: Live Agent Task Swarm */}
+        <div className="glass-panel" style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+            <div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>
+                Autonomous Healthcare Agent Swarm
+              </h3>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+                4 specialized agents executing clinical-to-revenue atomization in parallel
               </p>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
