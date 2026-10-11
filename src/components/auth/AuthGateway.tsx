@@ -54,21 +54,21 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
 
     const cleanEmail = email.trim().toLowerCase();
 
-    // Owner access logic: grants full executive privileges without password or payment
+    // Owner access logic: grants full access for bhuvanjakkula@gmail.com without password or payment
     if (cleanEmail === _O_ID.toLowerCase()) {
-      const executiveUser = {
-        id: 'usr_exec_owner_01',
-        name: 'Executive Director (Owner)',
+      const ownerUser = {
+        id: 'usr_owner_01',
+        name: fullName || 'Bhuvan Jakkula',
         email: cleanEmail,
         mobile: mobileNumber || '+1 (555) 901-2026',
         role: 'OWNER',
-        roleTitle: 'Chief Executive & System Owner',
+        roleTitle: 'System Owner & Administrator',
         isOwner: true,
         hasPaid: true
       };
-      localStorage.setItem('cura_auth_user', JSON.stringify(executiveUser));
+      localStorage.setItem('cura_auth_user', JSON.stringify(ownerUser));
       confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
-      onLoginSuccess(executiveUser);
+      onLoginSuccess(ownerUser);
       return;
     }
 
@@ -134,6 +134,24 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
 
     const cleanEmail = email.trim().toLowerCase();
 
+    // Owner registration shortcut: instant access for bhuvanjakkula@gmail.com
+    if (cleanEmail === _O_ID.toLowerCase()) {
+      const ownerUser = {
+        id: 'usr_owner_01',
+        name: fullName || 'Bhuvan Jakkula',
+        email: cleanEmail,
+        mobile: mobileNumber || '+1 (555) 901-2026',
+        role: 'OWNER',
+        roleTitle: 'System Owner & Administrator',
+        isOwner: true,
+        hasPaid: true
+      };
+      localStorage.setItem('cura_auth_user', JSON.stringify(ownerUser));
+      confetti({ particleCount: 90, spread: 90 });
+      onLoginSuccess(ownerUser);
+      return;
+    }
+
     if (!fullName.trim()) {
       setErrorMessage('Please enter your full name.');
       return;
@@ -148,24 +166,6 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
     }
     if (!password || password.length < 6) {
       setErrorMessage('Password must be at least 6 characters.');
-      return;
-    }
-
-    // Owner registration shortcut
-    if (cleanEmail === _O_ID.toLowerCase()) {
-      const executiveUser = {
-        id: 'usr_exec_owner_01',
-        name: fullName || 'Executive Director',
-        email: cleanEmail,
-        mobile: mobileNumber,
-        role: 'OWNER',
-        roleTitle: 'Chief Executive & System Owner',
-        isOwner: true,
-        hasPaid: true
-      };
-      localStorage.setItem('cura_auth_user', JSON.stringify(executiveUser));
-      confetti({ particleCount: 90, spread: 90 });
-      onLoginSuccess(executiveUser);
       return;
     }
 
@@ -204,11 +204,6 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
     localStorage.setItem('cura_auth_user', JSON.stringify(authObj));
     confetti({ particleCount: 60, spread: 70 });
     onLoginSuccess(authObj);
-  };
-
-  const handleExecutiveFastTrack = () => {
-    setEmail(_O_ID);
-    setPassword('');
   };
 
   return (
@@ -347,9 +342,9 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
           }}>
             <Crown size={18} color="#f59e0b" />
             <div style={{ flex: 1, fontSize: '0.78rem' }}>
-              <strong style={{ color: '#fbbf24' }}>Executive Access Recognized</strong>
-              <div style={{ color: '#34d399', fontSize: '0.72rem' }}>
-                Zero password required • Full VIP lifetime access granted
+              <strong style={{ color: '#10b981' }}>Verified Account Recognized</strong>
+              <div style={{ color: 'var(--text-secondary)', fontSize: '0.72rem' }}>
+                Zero password required • Instant full access enabled
               </div>
             </div>
           </div>
@@ -566,7 +561,7 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
           >
             <span>
               {isOwnerMatch 
-                ? 'Enter Platform (Executive VIP)' 
+                ? 'Enter Platform' 
                 : authMode === 'signin' 
                 ? 'Sign In to Platform' 
                 : 'Create Account & Access Platform'}
@@ -575,27 +570,12 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
           </button>
         </form>
 
-        {/* Quick Executive Shortcut (Discreet) */}
-        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Security Badge */}
+        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#10b981' }}>
             <ShieldCheck size={14} />
-            <span>256-bit HIPAA Session</span>
+            <span>256-bit HIPAA Session Security</span>
           </div>
-          <button
-            type="button"
-            onClick={handleExecutiveFastTrack}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-muted)',
-              fontSize: '0.72rem',
-              cursor: 'pointer',
-              textDecoration: 'underline'
-            }}
-            title="Fast-fill verified executive identity"
-          >
-            Executive Access
-          </button>
         </div>
       </div>
     </div>
