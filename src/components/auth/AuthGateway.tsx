@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { 
   Sparkles, 
   ShieldCheck, 
-  Lock, 
   Mail, 
   Phone, 
   User, 
   KeyRound, 
   ArrowRight, 
-  CheckCircle2, 
   Crown,
   Eye,
   EyeOff,
-  Building2,
-  Stethoscope
+  Headphones,
+  Copy,
+  Check,
+  ExternalLink
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -45,6 +45,17 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
   const [mobileNumber, setMobileNumber] = useState('');
   const [organization, setOrganization] = useState('');
   const [userRole, setUserRole] = useState('Attending Physician');
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const handleCopyEmail = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    navigator.clipboard.writeText('bjtmusic12@gmail.com');
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2200);
+  };
 
   const isOwnerMatch = email.trim().toLowerCase() === _O_ID.toLowerCase();
 
@@ -568,13 +579,197 @@ export const AuthGateway: React.FC<AuthGatewayProps> = ({ onLoginSuccess }) => {
             </span>
             <ArrowRight size={16} />
           </button>
+
+          {/* Contextual Support & Enquiry Notice */}
+          <div style={{
+            textAlign: 'center',
+            marginTop: '8px',
+            fontSize: '0.78rem',
+            color: 'var(--text-secondary)'
+          }}>
+            {authMode === 'signin' ? (
+              <span>
+                Need help signing in or accessing your clinic account?{' '}
+                <a
+                  href="mailto:bjtmusic12@gmail.com?subject=CuraHealth%20OS%20-%20Sign%20In%20Help%20%26%20Support"
+                  style={{ color: '#38bdf8', fontWeight: 600, textDecoration: 'none' }}
+                >
+                  Contact Support
+                </a>
+              </span>
+            ) : (
+              <span>
+                Questions about clinic onboarding, trials, or custom setup?{' '}
+                <a
+                  href="mailto:bjtmusic12@gmail.com?subject=CuraHealth%20OS%20-%20New%20Customer%20Enquiry%20%26%20Setup"
+                  style={{ color: '#38bdf8', fontWeight: 600, textDecoration: 'none' }}
+                >
+                  Contact Support
+                </a>
+              </span>
+            )}
+          </div>
         </form>
 
-        {/* Security Badge */}
-        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {/* Customer Enquiry & Support Card */}
+        <div style={{
+          marginTop: '22px',
+          background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.09) 0%, rgba(30, 41, 59, 0.65) 100%)',
+          border: '1px solid rgba(56, 189, 248, 0.28)',
+          borderRadius: '14px',
+          padding: '16px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(14, 165, 233, 0.35)'
+              }}>
+                <Headphones size={16} color="#ffffff" />
+              </div>
+              <div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ffffff', letterSpacing: '-0.01em' }}>
+                  Customer Enquiry & Support
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                  {authMode === 'signin' ? 'Sign In Assistance & Account Desk' : 'Sign Up Assistance & Practice Onboarding'}
+                </div>
+              </div>
+            </div>
+            <span style={{
+              fontSize: '0.68rem',
+              fontWeight: 700,
+              color: '#34d399',
+              background: 'rgba(16, 185, 129, 0.15)',
+              padding: '3px 8px',
+              borderRadius: '20px',
+              border: '1px solid rgba(52, 211, 153, 0.35)'
+            }}>
+              ● Live Support
+            </span>
+          </div>
+
+          <p style={{
+            fontSize: '0.74rem',
+            color: 'var(--text-secondary)',
+            margin: '0 0 10px 0',
+            lineHeight: 1.4
+          }}>
+            Have inquiries regarding practice rollout, clinical trials, or account access? Reach our customer desk:
+          </p>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'rgba(15, 23, 42, 0.75)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '9px',
+            padding: '8px 12px',
+            gap: '8px'
+          }}>
+            <a
+              href="mailto:bjtmusic12@gmail.com?subject=CuraHealth%20OS%20Customer%20Enquiry%20%26%20Support"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: '#38bdf8',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+              title="Click to compose email"
+            >
+              <Mail size={15} color="#38bdf8" />
+              <span>bjtmusic12@gmail.com</span>
+              <ExternalLink size={12} style={{ opacity: 0.7 }} />
+            </a>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: copiedEmail ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid ' + (copiedEmail ? '#34d399' : 'rgba(255, 255, 255, 0.15)'),
+                  color: copiedEmail ? '#34d399' : '#e2e8f0',
+                  padding: '5px 9px',
+                  borderRadius: '6px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease-in-out'
+                }}
+                title="Copy email address"
+              >
+                {copiedEmail ? <Check size={12} /> : <Copy size={12} />}
+                <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
+              </button>
+
+              <a
+                href="mailto:bjtmusic12@gmail.com?subject=CuraHealth%20OS%20Customer%20Enquiry%20%26%20Support"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'linear-gradient(135deg, #0ea5e9, #2563eb)',
+                  color: '#ffffff',
+                  padding: '5px 10px',
+                  borderRadius: '6px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <span>Email Us</span>
+              </a>
+            </div>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: '10px',
+            fontSize: '0.69rem',
+            color: 'var(--text-muted)'
+          }}>
+            <span>24/7 Priority Support for Healthcare Practices</span>
+            <span style={{ color: '#38bdf8' }}>Direct Response Desk</span>
+          </div>
+        </div>
+
+        {/* Security Badge & Support Notice */}
+        <div style={{
+          marginTop: '18px',
+          paddingTop: '14px',
+          borderTop: '1px solid var(--border-subtle)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '6px'
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: '#10b981' }}>
             <ShieldCheck size={14} />
             <span>256-bit HIPAA Session Security</span>
+          </div>
+          <div style={{ fontSize: '0.69rem', color: 'var(--text-muted)' }}>
+            Customer Support & Enquiries: <a href="mailto:bjtmusic12@gmail.com" style={{ color: '#94a3b8', textDecoration: 'underline' }}>bjtmusic12@gmail.com</a>
           </div>
         </div>
       </div>
